@@ -10,9 +10,7 @@ import {
   Vector2,
   HalfFloatType,
 } from "three";
-
 import { ConvolutionMaterial } from "./ConvolutionMaterial";
-
 export interface BlurPassProps {
   gl: WebGLRenderer;
   resolution: number;
@@ -23,7 +21,6 @@ export interface BlurPassProps {
   depthScale?: number;
   depthToBlurRatioBias?: number;
 }
-
 export class BlurPass {
   renderTargetA: WebGLRenderTarget;
   renderTargetB: WebGLRenderTarget;
@@ -32,7 +29,6 @@ export class BlurPass {
   camera: Camera;
   screen: Mesh;
   renderToScreen: boolean;
-
   constructor({
     gl,
     resolution,
@@ -44,7 +40,6 @@ export class BlurPass {
     depthToBlurRatioBias = 0.25,
   }: BlurPassProps) {
     this.renderToScreen = false;
-
     this.renderTargetA = new WebGLRenderTarget(resolution, resolution, {
       minFilter: LinearFilter,
       magFilter: LinearFilter,
@@ -75,11 +70,10 @@ export class BlurPass {
     this.screen.frustumCulled = false;
     this.scene.add(this.screen);
   }
-
   render(
     renderer: WebGLRenderer,
     inputBuffer: WebGLRenderTarget,
-    outputBuffer: WebGLRenderTarget
+    outputBuffer: WebGLRenderTarget,
   ) {
     const scene = this.scene;
     const camera = this.camera;

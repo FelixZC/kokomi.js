@@ -1,9 +1,7 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es";
-
 import { Component } from "./component";
 import { Base } from "../base/base";
-
 /**
  * kokomi.js uses [cannon.js](https://github.com/pmndrs/cannon-es) for physics. Just create mesh and body, and add it to base's physics!
  *
@@ -14,11 +12,9 @@ class Physics extends Component {
   meshPhysicsObjects: MeshPhysicsObject[];
   constructor(base: Base) {
     super(base);
-
     const world = new CANNON.World();
     world.gravity.set(0, -9.82, 0);
     this.world = world;
-
     this.meshPhysicsObjects = [];
   }
   // 添加物体
@@ -55,7 +51,6 @@ class Physics extends Component {
     this.tick();
   }
 }
-
 class MeshPhysicsObject {
   mesh: THREE.Mesh | THREE.Object3D;
   body: CANNON.Body;
@@ -65,7 +60,7 @@ class MeshPhysicsObject {
     mesh: THREE.Mesh | THREE.Object3D,
     body: CANNON.Body,
     copyPosition = true,
-    copyQuaternion = true
+    copyQuaternion = true,
   ) {
     this.mesh = mesh;
     this.body = body;
@@ -73,12 +68,10 @@ class MeshPhysicsObject {
     this.copyQuaternion = copyQuaternion;
   }
 }
-
 export interface MeshPhysicsObjectParams {
   mesh: THREE.Mesh | THREE.Object3D;
   body: CANNON.Body;
   copyPosition?: boolean;
   copyQuaternion?: boolean;
 }
-
 export { Physics, MeshPhysicsObject };

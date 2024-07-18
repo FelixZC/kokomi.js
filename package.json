@@ -8,7 +8,8 @@
     "build": "rimraf dist && tsc && rimraf build && rollup -c",
     "updateIndex": "node examples/getFilesData.mjs",
     "doc": "rimraf docs && typedoc src/index.ts",
-    "all": "node examples/getFilesData.mjs && rimraf dist && tsc && rimraf build && rollup -c && rimraf docs && typedoc src/index.ts"
+    "all": "node examples/getFilesData.mjs && rimraf dist && tsc && rimraf build && rollup -c && rimraf docs && typedoc src/index.ts",
+    "format": "npx prettier --write \"src/**/*.js\" \"src/**/*.ts\""
   },
   "author": "alphardex",
   "license": "MIT",
@@ -18,6 +19,8 @@
     "cannon-es": "^0.20.0",
     "gsap": "^3.12.5",
     "imagesloaded": "^5.0.0",
+    "kokomi.js": "^1.9.99",
+    "lil-gui": "^0.19.2",
     "maku.js": "^1.0.8",
     "marcher.js": "^1.4.3",
     "mitt": "^3.0.1",
@@ -45,6 +48,6 @@
     "typescript": "^5.5.2"
   },
   "peerDependencies": {
-    "three": ">=0.137"
+    "three": "^0.164.1"
   }
 }

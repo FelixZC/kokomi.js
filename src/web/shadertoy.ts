@@ -1,25 +1,18 @@
 import * as THREE from "three";
-
 import { Base } from "../base/base";
-
 import { ScreenQuad } from "../shapes";
-
 import { getUniformFromAsset } from "./utils";
-
 const defaultFragmentShader = /* glsl */ `
 void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
-    // Normalized pixel coordinates (from 0 to 1)
-    vec2 uv = fragCoord/iResolution.xy;
-
-    // Time varying pixel color
-    vec3 col = 0.5 + 0.5*cos(iTime+uv.xyx+vec3(0,2,4));
-
-    // Output to screen
-    fragColor = vec4(col,1.0);
+   // Normalized pixel coordinates (from 0 to 1)
+   vec2 uv = fragCoord/iResolution.xy;
+   // Time varying pixel color
+   vec3 col = 0.5 + 0.5*cos(iTime+uv.xyx+vec3(0,2,4));
+   // Output to screen
+   fragColor = vec4(col,1.0);
 }
 `;
-
 class Sketch extends Base {
   create(fragmentShader: string, uniforms = {}) {
     const screenQuad = new ScreenQuad(this, {
@@ -30,13 +23,11 @@ class Sketch extends Base {
     screenQuad.addExisting();
   }
 }
-
 const createSketch = (id = "sketch", fragmentShader: string, uniforms = {}) => {
   const sketch = new Sketch(`#${id}`);
   sketch.create(fragmentShader, uniforms);
   return sketch;
 };
-
 /**
  * You can use `<shader-toy></shader-toy>` tag to setup a shadertoy environment in html.
  *
@@ -47,7 +38,6 @@ class ShaderToyElement extends HTMLElement {
   sketch: Sketch | null;
   constructor() {
     super();
-
     this.container = null;
     this.sketch = null;
   }
@@ -100,5 +90,4 @@ class ShaderToyElement extends HTMLElement {
     this.sketch = sketch;
   }
 }
-
 export { ShaderToyElement };

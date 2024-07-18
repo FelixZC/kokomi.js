@@ -1,17 +1,12 @@
 import * as THREE from "three";
-
 import type { Base } from "../base/base";
 import { Component } from "../components/component";
-
 import gsap from "gsap";
-
 import { Html } from "../web";
-
 export interface BasicPanoramaConfig {
   id: string;
   radius: number;
 }
-
 class BasicPanorama extends Component {
   id: string;
   material: THREE.MeshBasicMaterial;
@@ -21,11 +16,8 @@ class BasicPanorama extends Component {
   active: boolean;
   constructor(base: Base, config: Partial<BasicPanoramaConfig> = {}) {
     super(base);
-
     const { id = "", radius = 5000 } = config;
-
     this.id = id;
-
     const geometry = new THREE.SphereGeometry(radius, 60, 40);
     const material = new THREE.MeshBasicMaterial({
       side: THREE.BackSide,
@@ -35,7 +27,6 @@ class BasicPanorama extends Component {
     this.material = material;
     const mesh = new THREE.Mesh(geometry, material);
     this.mesh = mesh;
-
     this.infospots = [];
     this.isInfospotVisible = false;
     this.active = false;
@@ -48,7 +39,7 @@ class BasicPanorama extends Component {
     container.addEventListener("click", (event) => {
       const intersects = this.base.interactionManager.raycaster.intersectObject(
         this.mesh,
-        true
+        true,
       );
       const point = intersects[0].point.clone();
       const position = {
@@ -80,7 +71,7 @@ class BasicPanorama extends Component {
           onComplete() {
             resolve(true);
           },
-        }
+        },
       );
     });
   }
@@ -97,7 +88,7 @@ class BasicPanorama extends Component {
           onComplete() {
             resolve(true);
           },
-        }
+        },
       );
     });
   }
@@ -126,8 +117,8 @@ class BasicPanorama extends Component {
     const visible = isVisible
       ? isVisible
       : this.isInfospotVisible
-      ? false
-      : true;
+        ? false
+        : true;
     this.isInfospotVisible = visible;
   }
   onEnter(duration = 0.5) {
@@ -141,5 +132,4 @@ class BasicPanorama extends Component {
     this.fadeOut(duration);
   }
 }
-
 export { BasicPanorama };

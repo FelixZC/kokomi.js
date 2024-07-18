@@ -9,9 +9,7 @@ import {
   CSMPatchMap,
   CSMBaseMaterial,
 } from "./types";
-
 import { defaultPatchMap, shaderMaterial_PatchMap } from "./patchMaps";
-
 // @ts-ignore
 import tokenize from "glsl-tokenizer";
 // @ts-ignore
@@ -19,9 +17,7 @@ import stringify from "glsl-token-string";
 // @ts-ignore
 import tokenFunctions from "glsl-token-functions";
 import { defaultDefinitions } from "./shaders";
-
 const hash = (str: any) => md5(JSON.stringify(str));
-
 const replaceAll = (str: string, find: string, rep: string) =>
   str.split(find).join(rep);
 const escapeRegExpMatch = function (s: string) {
@@ -30,9 +26,8 @@ const escapeRegExpMatch = function (s: string) {
 const isExactMatch = (str: string, match: string) => {
   return new RegExp(`\\b${escapeRegExpMatch(match)}\\b`).test(str);
 };
-
 function isConstructor(
-  f: CSMBaseMaterial
+  f: CSMBaseMaterial,
 ): f is new (opts: { [key: string]: any }) => Material {
   try {
     // @ts-ignore
@@ -44,13 +39,11 @@ function isConstructor(
   }
   return true;
 }
-
 /**
  * Credit: https://github.com/FarazzShaikh/THREE-CustomShaderMaterial
  */
 class CustomShaderMaterial extends Material {
   uniforms: { [key: string]: IUniform<any> };
-
   private _customPatchMap: CSMPatchMap;
   private _fs: string;
   private _vs: string;
@@ -58,7 +51,6 @@ class CustomShaderMaterial extends Material {
   private _base: CSMBaseMaterial;
   private _instanceID: string;
   private _type: string;
-
   constructor({
     baseMaterial,
     fragmentShader,
@@ -75,13 +67,11 @@ class CustomShaderMaterial extends Material {
       base = baseMaterial;
       Object.assign(base, opts);
     }
-
     if (base.type === "RawShaderMaterial") {
       throw new Error(
-        "CustomShaderMaterial does not support RawShaderMaterial"
+        "CustomShaderMaterial does not support RawShaderMaterial",
       );
     }
-
     super();
     this.uniforms = uniforms || {};
     this._customPatchMap = patchMap || {};
@@ -91,13 +81,11 @@ class CustomShaderMaterial extends Material {
     this._base = baseMaterial;
     this._type = base.type;
     this._instanceID = MathUtils.generateUUID();
-
     for (const key in base) {
       let k = key;
       if (key.startsWith("_")) {
         k = key.split("_")[1];
       }
-
       // @ts-ignore
       if (this[k] === undefined) this[k] = 0;
       // @ts-ignore
@@ -105,19 +93,16 @@ class CustomShaderMaterial extends Material {
     }
     this.update({ fragmentShader, vertexShader, uniforms, cacheKey });
   }
-
   update(opts?: Partial<iCSMUpdateParams>) {
     const uniforms = opts?.uniforms || {};
     const fragmentShader = opts?.fragmentShader || this._fs;
     const vertexShader = opts?.vertexShader || this._vs;
-
     const serializedUniforms = Object.values(uniforms).reduce(
       (prev, { value }) => {
         return prev + JSON.stringify(value);
       },
-      ""
+      "",
     );
-
     this.uuid =
       opts?.cacheKey?.() ||
       hash([
@@ -132,7 +117,6 @@ class CustomShaderMaterial extends Material {
       uniforms,
     });
   }
-
   clone(): this {
     // @ts-ignore
     const c = new this.constructor({
@@ -143,16 +127,13 @@ class CustomShaderMaterial extends Material {
       uniforms: this.uniforms,
       cacheKey: this._cacheKey,
     });
-
     for (const key in this) {
       if (key === "uuid") continue;
       // @ts-ignore
       c[key] = this[key];
     }
-
     return c;
   }
-
   private generateMaterial({
     fragmentShader,
     vertexShader,
@@ -160,17 +141,15 @@ class CustomShaderMaterial extends Material {
   }: Omit<iCSMUpdateParams, "cacheKey">) {
     const parsedFragmentShader = this.parseShader(fragmentShader);
     const parsedVertexShader = this.parseShader(vertexShader);
-
     this.uniforms = uniforms || {};
     this.customProgramCacheKey = () => {
       return this.uuid;
     };
-
     this.onBeforeCompile = (shader) => {
       if (parsedFragmentShader) {
         const patchedFragmentShader = this.patchShader(
           parsedFragmentShader,
-          shader.fragmentShader
+          shader.fragmentShader,
         );
         shader.fragmentShader =
           this.getMaterialDefine() + patchedFragmentShader;
@@ -178,41 +157,33 @@ class CustomShaderMaterial extends Material {
       if (parsedVertexShader) {
         const patchedVertexShader = this.patchShader(
           parsedVertexShader,
-          shader.vertexShader
+          shader.vertexShader,
         );
-
         shader.vertexShader = "#define IS_VERTEX;\n" + patchedVertexShader;
         shader.vertexShader = this.getMaterialDefine() + shader.vertexShader;
       }
-
       shader.uniforms = { ...shader.uniforms, ...this.uniforms };
       this.uniforms = shader.uniforms;
     };
     this.needsUpdate = true;
   }
-
   private getMaterialDefine() {
     return `#define IS_${this._type.toUpperCase()};\n`;
   }
-
   private getPatchMapForMaterial() {
     switch (this._type) {
       case "ShaderMaterial":
         return shaderMaterial_PatchMap;
-
       default:
         return defaultPatchMap;
     }
   }
-
   private patchShader(customShader: iCSMShader, shader: string): string {
     let patchedShader: string = shader;
-
     const patchMap: CSMPatchMap = {
       ...this.getPatchMapForMaterial(),
       ...this._customPatchMap,
     };
-
     Object.keys(patchMap).forEach((name: string) => {
       Object.keys(patchMap[name]).forEach((key) => {
         if (isExactMatch(customShader.main, name)) {
@@ -220,27 +191,22 @@ class CustomShaderMaterial extends Material {
         }
       });
     });
-
     patchedShader = patchedShader.replace(
       "void main() {",
       `
-          ${customShader.header}
-          void main() {
-            ${defaultDefinitions}
-            ${customShader.main}
-          `
+         ${customShader.header}
+         void main() {
+           ${defaultDefinitions}
+           ${customShader.main}
+         `,
     );
-
     patchedShader = customShader.defines + patchedShader;
     return patchedShader;
   }
-
   private parseShader(shader?: string): iCSMShader | undefined {
     if (!shader) return;
-
     // Strip comments
     const s = shader.replace(/\/\*\*(.*?)\*\/|\/\/(.*?)\n/gm, "");
-
     const tokens = tokenize(s);
     const funcs = tokenFunctions(tokens);
     const mainIndex = funcs
@@ -249,23 +215,20 @@ class CustomShaderMaterial extends Material {
       })
       .indexOf("main");
     const variables = stringify(
-      tokens.slice(0, mainIndex >= 0 ? funcs[mainIndex].outer[0] : undefined)
+      tokens.slice(0, mainIndex >= 0 ? funcs[mainIndex].outer[0] : undefined),
     );
     const mainBody =
       mainIndex >= 0
         ? this.getShaderFromIndex(tokens, funcs[mainIndex].body)
         : "";
-
     return {
       defines: "",
       header: variables,
       main: mainBody,
     };
   }
-
   private getShaderFromIndex(tokens: any, index: number[]) {
     return stringify(tokens.slice(index[0], index[1]));
   }
 }
-
 export { CustomShaderMaterial };

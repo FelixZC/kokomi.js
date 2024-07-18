@@ -5,7 +5,6 @@ fflate - fast JavaScript compression/decompression
 Licensed under MIT. https://github.com/101arrowz/fflate/blob/master/LICENSE
 version 0.6.9
 */
-
 // DEFLATE is a complex format; to read this code, you should probably check the RFC first:
 // https://tools.ietf.org/html/rfc1951
 // You may also wish to take a look at the guide I made about this program:
@@ -45,7 +44,6 @@ var wk = function (c, id, msg, transfer, cb) {
   w.postMessage(msg, transfer);
   return w;
 };
-
 // aliases for shorter compressed code (most minifers don't do this)
 var u8 = Uint8Array,
   u16 = Uint16Array,
@@ -789,7 +787,7 @@ var dopt = function (dat, opt, pre, post, st) {
       : 12 + opt.mem,
     pre,
     post,
-    !st
+    !st,
   );
 };
 // Walmart object spread
@@ -865,7 +863,7 @@ var wrkr = function (fns, init, id, cb) {
     id,
     td,
     cbfs(td),
-    cb
+    cb,
   );
 };
 // base async inflate fn
@@ -1105,7 +1103,7 @@ var AsyncDeflate = /*#__PURE__*/ (function () {
         var strm = new Deflate(ev.data);
         onmessage = astrm(strm);
       },
-      6
+      6,
     );
   }
   return AsyncDeflate;
@@ -1122,7 +1120,7 @@ export function deflate(data, opts, cb) {
       return pbf(deflateSync(ev.data[0], ev.data[1]));
     },
     0,
-    cb
+    cb,
   );
 }
 /**
@@ -1196,7 +1194,7 @@ var AsyncInflate = /*#__PURE__*/ (function () {
         var strm = new Inflate();
         onmessage = astrm(strm);
       },
-      7
+      7,
     );
   }
   return AsyncInflate;
@@ -1213,7 +1211,7 @@ export function inflate(data, opts, cb) {
       return pbf(inflateSync(ev.data[0], gu8(ev.data[1])));
     },
     1,
-    cb
+    cb,
   );
 }
 /**
@@ -1276,7 +1274,7 @@ var AsyncGzip = /*#__PURE__*/ (function () {
         var strm = new Gzip(ev.data);
         onmessage = astrm(strm);
       },
-      8
+      8,
     );
   }
   return AsyncGzip;
@@ -1299,7 +1297,7 @@ export function gzip(data, opts, cb) {
       return pbf(gzipSync(ev.data[0], ev.data[1]));
     },
     2,
-    cb
+    cb,
   );
 }
 /**
@@ -1376,7 +1374,7 @@ var AsyncGunzip = /*#__PURE__*/ (function () {
         var strm = new Gunzip();
         onmessage = astrm(strm);
       },
-      9
+      9,
     );
   }
   return AsyncGunzip;
@@ -1399,7 +1397,7 @@ export function gunzip(data, opts, cb) {
       return pbf(gunzipSync(ev.data[0]));
     },
     3,
-    cb
+    cb,
   );
 }
 /**
@@ -1457,7 +1455,7 @@ var AsyncZlib = /*#__PURE__*/ (function () {
         var strm = new Zlib(ev.data);
         onmessage = astrm(strm);
       },
-      10
+      10,
     );
   }
   return AsyncZlib;
@@ -1480,7 +1478,7 @@ export function zlib(data, opts, cb) {
       return pbf(zlibSync(ev.data[0], ev.data[1]));
     },
     4,
-    cb
+    cb,
   );
 }
 /**
@@ -1554,7 +1552,7 @@ var AsyncUnzlib = /*#__PURE__*/ (function () {
         var strm = new Unzlib();
         onmessage = astrm(strm);
       },
-      11
+      11,
     );
   }
   return AsyncUnzlib;
@@ -1577,7 +1575,7 @@ export function unzlib(data, opts, cb) {
       return pbf(unzlibSync(ev.data[0], gu8(ev.data[1])));
     },
     5,
-    cb
+    cb,
   );
 }
 /**
@@ -1628,10 +1626,10 @@ var Decompress = /*#__PURE__*/ (function () {
           this.p[0] == 31 && this.p[1] == 139 && this.p[2] == 8
             ? new this.G(cb)
             : (this.p[0] & 15) != 8 ||
-              this.p[0] >> 4 > 7 ||
-              ((this.p[0] << 8) | this.p[1]) % 31
-            ? new this.I(cb)
-            : new this.Z(cb);
+                this.p[0] >> 4 > 7 ||
+                ((this.p[0] << 8) | this.p[1]) % 31
+              ? new this.I(cb)
+              : new this.Z(cb);
         this.s.push(this.p, final);
         this.p = null;
       }
@@ -1671,8 +1669,8 @@ export function decompress(data, opts, cb) {
   return data[0] == 31 && data[1] == 139 && data[2] == 8
     ? gunzip(data, opts, cb)
     : (data[0] & 15) != 8 || data[0] >> 4 > 7 || ((data[0] << 8) | data[1]) % 31
-    ? inflate(data, opts, cb)
-    : unzlib(data, opts, cb);
+      ? inflate(data, opts, cb)
+      : unzlib(data, opts, cb);
 }
 /**
  * Expands compressed GZIP, Zlib, or raw DEFLATE data, automatically detecting the format
@@ -1684,8 +1682,8 @@ export function decompressSync(data, out) {
   return data[0] == 31 && data[1] == 139 && data[2] == 8
     ? gunzipSync(data, out)
     : (data[0] & 15) != 8 || data[0] >> 4 > 7 || ((data[0] << 8) | data[1]) % 31
-    ? inflateSync(data, out)
-    : unzlibSync(data, out);
+      ? inflateSync(data, out)
+      : unzlibSync(data, out);
 }
 // flatten a directory structure
 var fltn = function (d, p, t, o) {
@@ -1726,7 +1724,7 @@ var dutf8 = function (d) {
       r += String.fromCharCode(((c & 31) << 6) | (d[i++] & 63));
     else
       r += String.fromCharCode(
-        ((c & 15) << 12) | ((d[i++] & 63) << 6) | (d[i++] & 63)
+        ((c & 15) << 12) | ((d[i++] & 63) << 6) | (d[i++] & 63),
       );
   }
 };
@@ -1920,7 +1918,7 @@ var wzh = function (d, b, f, fn, u, c, ce, co) {
       (dt.getDate() << 16) |
       (dt.getHours() << 11) |
       (dt.getMinutes() << 5) |
-      (dt.getSeconds() >>> 1)
+      (dt.getSeconds() >>> 1),
   ),
     (b += 4);
   if (c != null) {
@@ -2343,7 +2341,7 @@ export function zipSync(data, opts) {
         u: s != fn.length || (m && com.length != ms),
         o: o,
         compression: compression,
-      })
+      }),
     );
     o += 30 + s + exl + l;
     tot += 76 + 2 * (s + exl) + (ms || 0) + l;
@@ -2549,7 +2547,7 @@ var Unzip = /*#__PURE__*/ (function () {
         var dat = f
           ? buf.subarray(
               0,
-              is - 12 - (oc == -2 && 8) - (b4(buf, is - 16) == 0x8074b50 && 4)
+              is - 12 - (oc == -2 && 8) - (b4(buf, is - 16) == 0x8074b50 && 4),
             )
           : buf.subarray(0, i);
         if (add) add.push(dat, !!f);

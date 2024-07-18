@@ -1,9 +1,7 @@
 import * as THREE from "three";
-
 const v1 = new THREE.Vector3();
 const v2 = new THREE.Vector3();
 const v3 = new THREE.Vector3();
-
 const calcObjectPosition = (el: THREE.Object3D, camera: THREE.Camera) => {
   const objectPos = v1.setFromMatrixPosition(el.matrixWorld);
   objectPos.project(camera);
@@ -14,7 +12,6 @@ const calcObjectPosition = (el: THREE.Object3D, camera: THREE.Camera) => {
   const pos = new THREE.Vector2(x, y);
   return pos;
 };
-
 const isObjectBehindCamera = (el: THREE.Object3D, camera: THREE.Camera) => {
   const objectPos = v1.setFromMatrixPosition(el.matrixWorld);
   const cameraPos = v2.setFromMatrixPosition(camera.matrixWorld);
@@ -22,12 +19,11 @@ const isObjectBehindCamera = (el: THREE.Object3D, camera: THREE.Camera) => {
   const camDir = camera.getWorldDirection(v3);
   return deltaCamObj.angleTo(camDir) > Math.PI / 2;
 };
-
 const isObjectVisible = (
   el: THREE.Object3D,
   camera: THREE.Camera,
   raycaster: THREE.Raycaster,
-  occlude: THREE.Object3D[]
+  occlude: THREE.Object3D[],
 ) => {
   const elPos = v1.setFromMatrixPosition(el.matrixWorld);
   const screenPos = elPos.clone();
@@ -42,11 +38,10 @@ const isObjectVisible = (
   }
   return true;
 };
-
 const objectZIndex = (
   el: THREE.Object3D,
   camera: THREE.Camera,
-  zIndexRange = [16777271, 0]
+  zIndexRange = [16777271, 0],
 ) => {
   if (
     camera instanceof THREE.PerspectiveCamera ||
@@ -61,7 +56,6 @@ const objectZIndex = (
   }
   return undefined;
 };
-
 const objectScale = (el: THREE.Object3D, camera: THREE.Camera) => {
   if (camera instanceof THREE.OrthographicCamera) {
     return camera.zoom;
@@ -76,19 +70,16 @@ const objectScale = (el: THREE.Object3D, camera: THREE.Camera) => {
     return 1;
   }
 };
-
 const calcTransformFov = (camera: THREE.Camera) => {
   const heightHalf = window.innerHeight / 2;
   const fov = camera.projectionMatrix.elements[5] * heightHalf;
   return fov;
 };
-
 const epsilon = (value: number) => (Math.abs(value) < 1e-10 ? 0 : value);
-
 const getCSSMatrix = (
   matrix: THREE.Matrix4,
   multipliers: number[],
-  prepend = ""
+  prepend = "",
 ) => {
   let matrix3d = "matrix3d(";
   for (let i = 0; i !== 16; i++) {
@@ -97,11 +88,9 @@ const getCSSMatrix = (
   }
   return prepend + matrix3d;
 };
-
 const getCameraCSSMatrix = ((multipliers) => {
   return (matrix: THREE.Matrix4) => getCSSMatrix(matrix, multipliers);
 })([1, -1, 1, 1, 1, -1, 1, 1, 1, -1, 1, 1, 1, -1, 1, 1]);
-
 const getObjectCSSMatrix = ((scaleMultipliers) => {
   return (matrix: THREE.Matrix4, factor: number) =>
     getCSSMatrix(matrix, scaleMultipliers(factor), "translate(-50%,-50%)");
@@ -123,7 +112,6 @@ const getObjectCSSMatrix = ((scaleMultipliers) => {
   1,
   1,
 ]);
-
 export {
   calcObjectPosition,
   isObjectBehindCamera,

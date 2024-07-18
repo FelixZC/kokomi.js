@@ -1,12 +1,9 @@
 import type { Base } from "../base/base";
 import { Component } from "../components/component";
-
 import { detectDeviceType } from "../utils";
-
 export interface DragDetecterConfig {
   isCursorChanged: boolean;
 }
-
 /**
  * A detecter to detect `drag` event.
  */
@@ -16,62 +13,49 @@ class DragDetecter extends Component {
   enabled: boolean;
   constructor(base: Base, config: Partial<DragDetecterConfig> = {}) {
     super(base);
-
     const { isCursorChanged = true } = config;
     this.isCursorChanged = isCursorChanged;
-
     this.isDragging = false;
-
     this.enabled = true;
   }
   detectDrag() {
     const deviceType = detectDeviceType();
-
     const downEventName = {
       Mobile: "touchstart",
       Desktop: "mousedown",
     }[deviceType];
-
     const upEventName = {
       Mobile: "touchend",
       Desktop: "mouseup",
     }[deviceType];
-
     const moveEventName = {
       Mobile: "touchmove",
       Desktop: "mousemove",
     }[deviceType];
-
     this.changeCursorGrab();
-
     window.addEventListener(downEventName, () => {
       if (!this.enabled) {
         this.endDrag();
         return;
       }
-
       this.isDragging = true;
       this.changeCursorGrabbing();
       this.emit("dragstart");
     });
-
     window.addEventListener(upEventName, () => {
       if (!this.enabled) {
         this.endDrag();
         return;
       }
-
       this.isDragging = false;
       this.changeCursorGrab();
       this.emit("dragend");
     });
-
     window.addEventListener(moveEventName, () => {
       if (!this.enabled) {
         this.endDrag();
         return;
       }
-
       if (this.isDragging) {
         this.emit("drag", this.base.iMouse.mouseDOMDelta);
       }
@@ -104,5 +88,4 @@ class DragDetecter extends Component {
     this.resetCursor();
   }
 }
-
 export { DragDetecter };

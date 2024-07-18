@@ -1,14 +1,10 @@
 import * as THREE from "three";
-
 import type { Base } from "../base/base";
 import { Component } from "../components/component";
-
 // @ts-ignore
 import { preloadFont, Text } from "troika-three-text";
-
 const defaultSDFFontUrl =
   "https://fonts.gstatic.com/s/roboto/v18/KFOmCnqEu92Fr1Mu4mxM.woff";
-
 const preloadSDFFont = (url = defaultSDFFontUrl) => {
   return new Promise((resolve) => {
     preloadFont(
@@ -17,11 +13,10 @@ const preloadSDFFont = (url = defaultSDFFontUrl) => {
       },
       () => {
         resolve(true);
-      }
+      },
     );
   });
 };
-
 /**
  * A mesh using SDF to render text.
  *
@@ -33,7 +28,6 @@ class TextMesh extends Component {
   mesh: Text;
   constructor(base: Base, text = "") {
     super(base);
-
     this.mesh = new Text();
     this.mesh.text = text;
     this.mesh.anchorX = "center";
@@ -43,5 +37,4 @@ class TextMesh extends Component {
     this.container.add(this.mesh);
   }
 }
-
 export { preloadSDFFont, TextMesh };

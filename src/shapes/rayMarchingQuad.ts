@@ -1,10 +1,7 @@
 import type { Base } from "../base/base";
 import { Component } from "../components/component";
-
 import { ScreenQuad } from "./screenQuad";
-
 import * as marcher from "marcher.js";
-
 /**
  * Also a screenQuad, but for Raymarching.
  * It's used with [marcher.js](https://github.com/alphardex/marcher.js)——a Raymarching code generator library.
@@ -16,7 +13,6 @@ class RayMarchingQuad extends Component {
   marcher: marcher.Marcher;
   constructor(base: Base, marcher: marcher.Marcher) {
     super(base);
-
     this.screenQuad = null;
     this.marcher = marcher;
   }
@@ -32,5 +28,4 @@ class RayMarchingQuad extends Component {
     this.screenQuad = screenQuad;
   }
 }
-
 export { RayMarchingQuad };

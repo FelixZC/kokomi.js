@@ -54,5 +54,4 @@ class Keyboard {
     return this.keys["Escape"];
   }
 }
-
 export { Keyboard };

@@ -10,5 +10,4 @@ const getPointsInPath = (path: SVGPathElement, pointNum = 4) => {
   }
   return points;
 };
-
 export { getPointsInPath };

@@ -1,8 +1,6 @@
 import * as THREE from "three";
-
 import { Component } from "./component";
 import { Base } from "../base/base";
-
 /**
  * An encapsuled class for `THREE.Raycaster`.
  *
@@ -18,7 +16,7 @@ class RaycastSelector extends Component {
   getInterSects(targets = this.container.children) {
     this.raycaster.setFromCamera(
       this.base.interactionManager.mouse,
-      this.base.camera
+      this.base.camera,
     );
     const intersects = this.raycaster.intersectObjects(targets, true);
     return intersects;
@@ -48,5 +46,4 @@ class RaycastSelector extends Component {
     return includedTarget ? includedTarget : null;
   }
 }
-
 export { RaycastSelector };

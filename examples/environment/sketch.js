@@ -11,7 +11,7 @@ class Sketch extends kokomi.Base {
 
     const sphere = new THREE.Mesh(
       new THREE.SphereGeometry(2, 64, 64),
-      new THREE.MeshStandardMaterial({ color: new THREE.Color("orange") })
+      new THREE.MeshStandardMaterial({ color: new THREE.Color("white") })
     );
     this.scene.add(sphere);
 

@@ -1,10 +1,7 @@
 import * as THREE from "three";
-
 import type { Base } from "../base/base";
 import { Component } from "../components/component";
-
 import { FBO } from "./fbo";
-
 export interface RenderTextureConfig {
   width: number;
   height: number;
@@ -14,7 +11,6 @@ export interface RenderTextureConfig {
   rtCamera: THREE.Camera;
   fboOptions: THREE.RenderTargetOptions;
 }
-
 /**
  * You can render a scene into this texture.
  *
@@ -27,23 +23,20 @@ class RenderTexture extends Component {
   rtCamera: THREE.Camera;
   constructor(base: Base, config: Partial<RenderTextureConfig> = {}) {
     super(base);
-
     const {
       rtScene = new THREE.Scene(),
       rtCamera = new THREE.PerspectiveCamera(
         70,
         window.innerWidth / window.innerHeight,
         0.01,
-        100
+        100,
       ),
       fboOptions = {},
     } = config;
     this.rtScene = rtScene;
     this.rtCamera = rtCamera;
-
     const fbo = new FBO(base, { ...config, options: fboOptions });
     this.fbo = fbo;
-
     const texture = fbo.rt.texture;
     this.texture = texture;
   }
@@ -56,5 +49,4 @@ class RenderTexture extends Component {
     this.rtScene.add(obj);
   }
 }
-
 export { RenderTexture };

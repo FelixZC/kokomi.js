@@ -5,7 +5,7 @@ import * as dat from "lil-gui";
 
 class Sketch extends kokomi.Base {
   create() {
-    this.camera.position.set(0, 2, 0);
+    this.camera.position.set(2, 0, 2);
 
     this.camera.fov = 60;
     this.camera.updateProjectionMatrix();

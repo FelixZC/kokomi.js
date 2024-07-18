@@ -1,16 +1,11 @@
 import * as THREE from "three";
-
 import { Maku, MakuGroup, Scroller } from "maku.js";
 import { HTMLIVCElement, MakuConfig } from "maku.js/types/types";
-
 import type { Base } from "../base/base";
 import { Component } from "../components/component";
-
 import { preloadImages } from "../utils";
-
 import { UniformInjector } from "../components/uniformInjector";
 import { AllMaterialParams } from "../lib/THREE-CustomShaderMaterial";
-
 export interface GalleryConfig {
   elList: HTMLIVCElement[];
   vertexShader: string;
@@ -22,41 +17,31 @@ export interface GalleryConfig {
   materialParams: AllMaterialParams;
   isRectAutoRefreshed: boolean;
 }
-
 const defaultVertexShader = /* glsl */ `
 uniform float iTime;
 uniform vec2 iResolution;
 uniform vec2 iMouse;
-
 varying vec2 vUv;
-
 void main(){
-    vec3 p=position;
-    gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);
-    
-    vUv=uv;
+   vec3 p=position;
+   gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);
+   
+   vUv=uv;
 }
 `;
-
 const defaultFragmentShader = /* glsl */ `
 uniform float iTime;
 uniform vec2 iResolution;
 uniform vec2 iMouse;
-
 uniform sampler2D uTexture;
-
 varying vec2 vUv;
-
 void main(){
-    vec4 tex=texture(uTexture,vUv);
-    vec3 color=tex.rgb;
-    gl_FragColor=vec4(color,1.);
+   vec4 tex=texture(uTexture,vUv);
+   vec3 color=tex.rgb;
+   gl_FragColor=vec4(color,1.);
 }
 `;
-
 /**
- * It's just an encapsuled class for [maku.js](https://github.com/alphardex/maku.js), which is a powerful bridge between HTML and WebGL.
- *
  * Demo: https://kokomi-playground.vercel.app/entries/#imageMouseWave
  */
 class Gallery extends Component {
@@ -75,7 +60,6 @@ class Gallery extends Component {
   isRectAutoRefreshed: boolean;
   constructor(base: Base, config: Partial<GalleryConfig> = {}) {
     super(base);
-
     const {
       elList = [...document.querySelectorAll("img")],
       vertexShader = defaultVertexShader,
@@ -87,7 +71,6 @@ class Gallery extends Component {
       materialParams = {},
       isRectAutoRefreshed = false,
     } = config;
-
     this.elList = elList;
     this.vertexShader = vertexShader;
     this.fragmentShader = fragmentShader;
@@ -95,15 +78,12 @@ class Gallery extends Component {
     this.makuConfig = makuConfig;
     this.isScrollPositionSync = isScrollPositionSync;
     this.isRectAutoRefreshed = isRectAutoRefreshed;
-
     this.makuMaterial = null;
     this.makuGroup = null;
     this.scroller = scroller;
     this.materialParams = materialParams;
-
     const uniformInjector = new UniformInjector(base);
     this.uniformInjector = uniformInjector;
-
     this.useSelfScroller = false;
     if (!scroller) {
       this.useSelfScroller = true;
@@ -112,9 +92,7 @@ class Gallery extends Component {
   async addExisting(): Promise<void> {
     // Load all the images
     await preloadImages();
-
     const { uniformInjector } = this;
-
     // Create a ShaderMaterial
     const makuMaterial = new THREE.ShaderMaterial({
       vertexShader: this.vertexShader,
@@ -141,7 +119,6 @@ class Gallery extends Component {
       ...this.materialParams,
     });
     this.makuMaterial = makuMaterial;
-
     // Make a MakuGroup that contains all the makus!
     const makuGroup = new MakuGroup();
     this.makuGroup = makuGroup;
@@ -150,20 +127,17 @@ class Gallery extends Component {
         new Maku(el, makuMaterial, this.container, {
           ...this.makuConfig,
           isRectAutoRefreshed: this.isRectAutoRefreshed,
-        })
+        }),
     );
     makuGroup.addMultiple(makus);
-
     // Sync images positions
     makuGroup.setPositions();
-
     // scroller listen for scroll
     if (this.useSelfScroller) {
       const scroller = new Scroller();
       this.scroller = scroller;
       this.scroller.listenForScroll();
     }
-
     // handle resize
     this.base.resizer.on("resize", () => {
       makuGroup.makus.forEach((maku) => {
@@ -173,41 +147,36 @@ class Gallery extends Component {
   }
   update(time: number): void {
     const { scroller, makuGroup } = this;
-
     scroller?.syncScroll();
-
     makuGroup?.makus.forEach((maku) => {
       const material = maku.mesh.material as THREE.ShaderMaterial;
       const uniforms = material.uniforms;
       this.uniformInjector.injectShadertoyUniforms(uniforms);
-
       uniforms.uMeshSize.value = new THREE.Vector2(
         maku.el.clientWidth,
-        maku.el.clientHeight
+        maku.el.clientHeight,
       );
       uniforms.uMeshPosition.value = new THREE.Vector2(
         maku.mesh.position.x,
-        maku.mesh.position.y
+        maku.mesh.position.y,
       );
-
       const mediaEl = maku.el;
       if (mediaEl instanceof HTMLImageElement) {
         uniforms.uMediaSize.value = new THREE.Vector2(
           mediaEl.naturalWidth,
-          mediaEl.naturalHeight
+          mediaEl.naturalHeight,
         );
       } else if (mediaEl instanceof HTMLVideoElement) {
         uniforms.uMediaSize.value = new THREE.Vector2(
           mediaEl.videoWidth,
-          mediaEl.videoHeight
+          mediaEl.videoHeight,
         );
       } else if (mediaEl instanceof HTMLCanvasElement) {
         uniforms.uMediaSize.value = new THREE.Vector2(
           mediaEl.width,
-          mediaEl.height
+          mediaEl.height,
         );
       }
-
       if (this.isScrollPositionSync) {
         if (maku.el.classList.contains("webgl-fixed")) {
           // fixed element
@@ -243,13 +212,11 @@ class Gallery extends Component {
     });
   }
 }
-
 export interface HorizontalGalleryConfig extends GalleryConfig {
   direction: "horizontal" | "vertical";
   gap: number;
   appendCount: number;
 }
-
 /**
  * An infinite gallery.
  *
@@ -261,7 +228,6 @@ class InfiniteGallery extends Gallery {
   appendCount: number;
   constructor(base: Base, config: Partial<HorizontalGalleryConfig> = {}) {
     super(base, { ...config, isScrollPositionSync: false });
-
     const { direction = "vertical", gap = 64, appendCount = 3 } = config;
     this.direction = direction;
     this.gap = gap;
@@ -301,12 +267,10 @@ class InfiniteGallery extends Gallery {
   }
   sync(current = 0) {
     const { appendCount } = this;
-
     if (this.makuGroup) {
       const itemLength = this.getItemLength();
       const totalCount = this.getTotalCount();
       const totalLength = itemLength * totalCount;
-
       this.iterate((maku, i) => {
         maku.mesh.position[this.dimensionType] =
           ((itemLength * i - current - 114514 * totalLength) % totalLength) +
@@ -332,5 +296,4 @@ class InfiniteGallery extends Gallery {
     return activeIndex;
   }
 }
-
 export { Gallery, InfiniteGallery };

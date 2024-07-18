@@ -12,12 +12,13 @@ import {
   MeshoptDecoder,
 } from "three-stdlib";
 import { FBXLoader } from "../lib";
-
 import { Component } from "./component";
 import { Base } from "../base/base";
-
 import { loadVideoTexture } from "../utils";
 
+/**
+ * 资源类型的枚举，定义了支持的各类资源类型。
+ */
 export type ResoureType =
   | "gltfModel"
   | "texture"
@@ -32,14 +33,23 @@ export type ResoureType =
   | "video"
   | "ktx2Texture";
 
+/**
+ * 资源项的接口，描述了每个资源的属性，包括名称、类型和路径。
+ */
 export interface ResourceItem {
   name: string;
   type: ResoureType;
   path: string | string[];
 }
 
+/**
+ * 资源列表的类型定义，是一个资源项的数组。
+ */
 export type ResoureList = ResourceItem[];
 
+/**
+ * 加载器的接口，定义了各种资源加载器的属性。
+ */
 export interface Loaders {
   gltfLoader: GLTFLoader;
   textureLoader: THREE.TextureLoader;
@@ -54,6 +64,9 @@ export interface Loaders {
   ktx2Loader: KTX2Loader;
 }
 
+/**
+ * 资产管理器的配置接口，包括是否使用DracoLoader和MeshoptDecoder以及它们的路径。
+ */
 export interface AssetManagerConfig {
   useDracoLoader: boolean;
   useMeshoptDecoder: boolean;
@@ -62,9 +75,9 @@ export interface AssetManagerConfig {
 }
 
 /**
- * This class can handle the preloads of assets (gltfModel, texture, cubeTexture, font, etc). You can just write a simple js file to config your assets without caring about various loaders.
- *
- * Demo: https://kokomi-js.vercel.app/examples/#assetManager
+ * 资产管理器类，负责加载和管理各种类型的资源。
+ * 
+ * @extends Component 继承自组件基类。
  */
 class AssetManager extends Component {
   config: AssetManagerConfig;
@@ -73,17 +86,24 @@ class AssetManager extends Component {
   toLoad: number;
   loaded: number;
   loaders: Partial<Loaders>;
+
+  /**
+   * 创建一个AssetManager实例。
+   * 
+   * @param base 父基类实例。
+   * @param list 资源列表。
+   * @param config 资产管理器的配置项。
+   */
   constructor(
     base: Base,
     list: ResoureList,
     config: Partial<AssetManagerConfig> = {}
   ) {
     super(base);
-
     const {
       useDracoLoader = false,
       useMeshoptDecoder = false,
-      dracoDecoderPath = "https://www.gstatic.com/draco/versioned/decoders/1.4.3/",
+      dracoDecoderPath = "https://unpkg.com/three/examples/jsm/libs/basis/draco/",
       ktx2TranscoderPath = "https://unpkg.com/three/examples/jsm/libs/basis/",
     } = config;
     this.config = {
@@ -92,26 +112,19 @@ class AssetManager extends Component {
       dracoDecoderPath,
       ktx2TranscoderPath,
     };
-
     this.resourceList = list;
-
     this.items = {};
     this.toLoad = list.length;
     this.loaded = 0;
-
     this.loaders = {};
     this.setLoaders();
-
     if (useDracoLoader) {
       this.setDracoLoader();
     }
-
     if (useMeshoptDecoder) {
       this.setMeshoptDecoder();
     }
-
     this.setKTX2Loader();
-
     this.startLoading();
   }
   // 设置加载器
@@ -145,7 +158,6 @@ class AssetManager extends Component {
     this.loaders.ktx2Loader
       ?.setTranscoderPath(this.config.ktx2TranscoderPath)
       ?.detectSupport(this.base.renderer);
-
     if (this.loaders.ktx2Loader) {
       this.loaders.gltfLoader?.setKTX2Loader(this.loaders.ktx2Loader);
     }
@@ -166,7 +178,7 @@ class AssetManager extends Component {
           resource.path as string[],
           (file) => {
             this.resourceLoaded(resource, file);
-          }
+          },
         );
       } else if (resource.type === "font") {
         this.loaders.fontLoader?.load(resource.path as string, (file) => {
@@ -225,5 +237,4 @@ class AssetManager extends Component {
     return this.loaded === this.toLoad;
   }
 }
-
 export { AssetManager };

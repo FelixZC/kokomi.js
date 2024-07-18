@@ -1,8 +1,6 @@
 import * as THREE from "three";
-
 import type { Base } from "../base/base";
 import { Component } from "../components/component";
-
 import {
   calcObjectPosition,
   calcTransformFov,
@@ -14,7 +12,6 @@ import {
   objectZIndex,
   objectScale,
 } from "../utils";
-
 export interface HtmlConfig {
   visibleClassName: string;
   xPropertyName: string;
@@ -31,7 +28,6 @@ export interface HtmlConfig {
   distanceFactor: number;
   group: THREE.Object3D | null;
 }
-
 /**
  * It can help you merge HTML elements into the WebGL world by converting 3D positions to 2D positions.
  * If element is visible, it will have a `visible` CSS class (can be customized), and for 2D position it will have 3 CSS variables `--x`, `--y` and `--z-index` (can be customized too)
@@ -62,12 +58,11 @@ class Html extends Component {
     base: Base,
     el: HTMLElement,
     position = new THREE.Vector3(0, 0, 0),
-    config: Partial<HtmlConfig> = {}
+    config: Partial<HtmlConfig> = {},
   ) {
     super(base);
     this.el = el;
     this.position = position;
-
     const {
       visibleClassName = "visible",
       xPropertyName = "--x",
@@ -88,25 +83,19 @@ class Html extends Component {
     this.xPropertyName = xPropertyName;
     this.yPropertyName = yPropertyName;
     this.zIndexPropertyName = zIndexPropertyName;
-
     this.scalePropertyName = scalePropertyName;
-
     this.viewportWidthName = viewportWidthName;
     this.viewportHeightName = viewportHeightName;
     this.perspectiveName = perspectiveName;
     this.transformOuterName = transformOuterName;
     this.transformInnerName = transformInnerName;
-
     this.raycaster = new THREE.Raycaster();
     this.occlude = occlude;
-
     this.transform = transform;
     this.distanceFactor = distanceFactor;
     this.parentGroup = group;
     this.group = new THREE.Group();
-
     this.group.position.copy(this.position);
-
     this.visibleToggle = true;
   }
   get domPosition() {
@@ -128,7 +117,7 @@ class Html extends Component {
       this.group,
       this.base.camera,
       this.raycaster,
-      this.occlude
+      this.occlude,
     );
   }
   get visible() {
@@ -165,7 +154,7 @@ class Html extends Component {
     const cameraMatrix = getCameraCSSMatrix(camera.matrixWorldInverse);
     const cameraTransform = isOrthographicCamera
       ? `scale(${fov})translate(${epsilon(-(right + left) / 2)}px,${epsilon(
-          (top + bottom) / 2
+          (top + bottom) / 2,
         )}px)`
       : `translateZ(${fov}px)`;
     return `${cameraTransform}${cameraMatrix}translate(${widthHalf}px,${heightHalf}px)`;
@@ -200,11 +189,9 @@ class Html extends Component {
   syncPosition() {
     this.translate(this.domPosition);
     this.setScale(this.scale);
-
     if (this.zIndex) {
       this.setZIndex(this.zIndex);
     }
-
     if (this.transform) {
       this.setTransformProperty();
     }
@@ -226,16 +213,15 @@ class Html extends Component {
   setTransformProperty() {
     this.el?.style.setProperty(
       this.viewportWidthName,
-      `${this.viewportSize.width}px`
+      `${this.viewportSize.width}px`,
     );
     this.el?.style.setProperty(
       this.viewportHeightName,
-      `${this.viewportSize.height}px`
+      `${this.viewportSize.height}px`,
     );
     this.el?.style.setProperty(this.perspectiveName, `${this.perspective}px`);
     this.el?.style.setProperty(this.transformOuterName, this.transformOuter);
     this.el?.style.setProperty(this.transformInnerName, this.transformInner);
   }
 }
-
 export { Html };

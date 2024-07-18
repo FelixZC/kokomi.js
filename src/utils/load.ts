@@ -6,16 +6,14 @@ import {
   FBXLoader,
   RGBELoader,
 } from "three-stdlib";
-
 export interface LoadVideoOptions extends HTMLMediaElement {
   unsuspend: "canplay" | "canplaythrough" | "loadstart" | "loadedmetadata";
   start: boolean;
 }
-
 // 加载视频贴图
 const loadVideoTexture = (
   src: string,
-  options: Partial<LoadVideoOptions> = {}
+  options: Partial<LoadVideoOptions> = {},
 ): Promise<THREE.VideoTexture> => {
   const {
     unsuspend = "loadedmetadata",
@@ -24,7 +22,6 @@ const loadVideoTexture = (
     muted = true,
     start = true,
   } = options;
-
   return new Promise((resolve) => {
     const video = Object.assign(document.createElement("video"), {
       src,
@@ -38,38 +35,31 @@ const loadVideoTexture = (
       if (start) {
         texture.image.play();
       }
-
       resolve(texture);
     });
   });
 };
-
 export interface LoadGLTFConfig {
   useDraco: boolean | string;
 }
-
 let dracoLoader: DRACOLoader | null = null;
-
 // 加载GLTF模型
 const loadGLTF = (
   path: string,
-  config: Partial<LoadGLTFConfig> = {}
+  config: Partial<LoadGLTFConfig> = {},
 ): Promise<GLTF | null> => {
   const { useDraco = true } = config;
-
   return new Promise((resolve) => {
     const loader = new GLTFLoader();
-
     if (useDraco) {
       dracoLoader = new DRACOLoader();
       dracoLoader.setDecoderPath(
         typeof useDraco === "string"
           ? useDraco
-          : "https://www.gstatic.com/draco/versioned/decoders/1.4.3/"
+          : "https://www.gstatic.com/draco/versioned/decoders/1.4.3/",
       );
       loader.setDRACOLoader(dracoLoader);
     }
-
     loader.load(
       path,
       (file) => {
@@ -78,16 +68,14 @@ const loadGLTF = (
       () => {},
       () => {
         resolve(null);
-      }
+      },
     );
   });
 };
-
 // 加载FBX模型
 const loadFBX = (path: string): Promise<THREE.Group | null> => {
   return new Promise((resolve) => {
     const loader = new FBXLoader();
-
     loader.load(
       path,
       (file) => {
@@ -96,16 +84,14 @@ const loadFBX = (path: string): Promise<THREE.Group | null> => {
       () => {},
       () => {
         resolve(null);
-      }
+      },
     );
   });
 };
-
 // 加载HDR
 const loadHDR = (path: string): Promise<THREE.DataTexture | null> => {
   return new Promise((resolve) => {
     const loader = new RGBELoader();
-
     loader.load(
       path,
       (file) => {
@@ -114,9 +100,8 @@ const loadHDR = (path: string): Promise<THREE.DataTexture | null> => {
       () => {},
       () => {
         resolve(null);
-      }
+      },
     );
   });
 };
-
 export { loadVideoTexture, loadGLTF, loadFBX, loadHDR };

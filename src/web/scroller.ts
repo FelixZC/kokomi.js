@@ -1,7 +1,5 @@
 import * as THREE from "three";
-
 import { Scroller } from "maku.js";
-
 export interface Scroll {
   current: number;
   target: number;
@@ -10,9 +8,7 @@ export interface Scroll {
   delta: number;
   direction: "up" | "down" | "";
 }
-
 const NormalScroller = Scroller;
-
 /**
  * A scroller to detect `wheel` event.
  *
@@ -30,7 +26,6 @@ class WheelScroller {
       delta: 0,
       direction: "",
     };
-
     this.enabled = true;
   }
   enable() {
@@ -45,7 +40,6 @@ class WheelScroller {
       if (!this.enabled) {
         return;
       }
-
       const newScrollY = e.deltaY;
       const scrollYDelta = newScrollY;
       this.scroll.target += scrollYDelta;
@@ -56,12 +50,11 @@ class WheelScroller {
     this.scroll.current = THREE.MathUtils.lerp(
       this.scroll.current,
       this.scroll.target,
-      this.scroll.ease
+      this.scroll.ease,
     );
     this.scroll.delta = this.scroll.current - this.scroll.last;
     this.scroll.direction = this.scroll.delta > 0 ? "down" : "up";
     this.scroll.last = this.scroll.current;
   }
 }
-
 export { NormalScroller, WheelScroller };

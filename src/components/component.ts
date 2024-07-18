@@ -1,9 +1,6 @@
 import * as THREE from "three";
-
 import mitt, { type Emitter } from "mitt";
-
 import type { Base } from "../base/base";
-
 /**
  * By extending this class, you can make your components keep their own state and animation.
  *
@@ -16,9 +13,7 @@ class Component {
   constructor(base: Base) {
     this.base = base;
     this.base.update((time: number) => this.update(time));
-
     this.emitter = mitt();
-
     this.container = this.base.scene;
   }
   // 将组件添加至当前场景或替换当前场景中已有的组件
@@ -42,5 +37,4 @@ class Component {
     this.emitter.emit(type, event);
   }
 }
-
 export { Component };

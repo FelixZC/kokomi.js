@@ -16,5 +16,4 @@ const adaptMobileDOM = (el: HTMLElement) => {
     }px center`;
   }
 };
-
 export { adaptMobileDOM };

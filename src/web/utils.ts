@@ -1,16 +1,13 @@
 import * as THREE from "three";
-
 export type HTMLAssetElement = HTMLImageElement | HTMLVideoElement;
-
 const handleTextureProp = (
   el: HTMLAssetElement | null,
-  texture: THREE.Texture
+  texture: THREE.Texture,
 ) => {
   const minFilterDefaultValue =
     el instanceof HTMLVideoElement ? "linear" : "mipmap";
   const magFilterDefaultValue =
     el instanceof HTMLVideoElement ? "linear" : "mipmap";
-
   const wrapS = el?.getAttribute("wrap-s") || "repeat";
   const wrapT = el?.getAttribute("wrap-t") || "repeat";
   const minFilter = el?.getAttribute("min-filter") || minFilterDefaultValue;
@@ -29,7 +26,6 @@ const handleTextureProp = (
   texture.wrapT = wrapMap[wrapT];
   texture.minFilter = filterMap[minFilter];
   texture.magFilter = filterMap[magFilter];
-
   if (el instanceof HTMLVideoElement) {
     const start = el?.getAttribute("autoplay") || "";
     el?.addEventListener("loadedmetadata", () => {
@@ -39,7 +35,6 @@ const handleTextureProp = (
     });
   }
 };
-
 const loadTextureFromImg = (el: HTMLImageElement | null) => {
   if (!el) {
     return null;
@@ -48,21 +43,19 @@ const loadTextureFromImg = (el: HTMLImageElement | null) => {
   handleTextureProp(el, texture);
   return texture;
 };
-
 const loadCubemapFromImgs = (
   el: HTMLImageElement | null,
-  els: HTMLImageElement[]
+  els: HTMLImageElement[],
 ) => {
   if (!el) {
     return null;
   }
   const texture = new THREE.CubeTextureLoader().load(
-    els.map((item) => item.src)
+    els.map((item) => item.src),
   );
   handleTextureProp(el, texture);
   return texture;
 };
-
 const loadTextureFromVideo = (el: HTMLVideoElement | null) => {
   if (!el) {
     return null;
@@ -71,11 +64,10 @@ const loadTextureFromVideo = (el: HTMLVideoElement | null) => {
   handleTextureProp(el, texture);
   return texture;
 };
-
 const getUniformFromAsset = (
   el: HTMLAssetElement | null,
   name: string,
-  parent: HTMLElement | null = null
+  parent: HTMLElement | null = null,
 ) => {
   if (!el) {
     return {};
@@ -114,5 +106,4 @@ const getUniformFromAsset = (
     : {};
   return uniform;
 };
-
 export { loadTextureFromImg, loadCubemapFromImgs, getUniformFromAsset };

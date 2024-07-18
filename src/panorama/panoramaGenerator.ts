@@ -1,21 +1,16 @@
 import * as THREE from "three";
-
 import type { Base } from "../base/base";
 import { Component } from "../components/component";
-
 import { AssetManager, ResoureType } from "../components/assetManager";
 import { Viewer } from "./viewer";
 import { ImagePanorama } from "./imagePanorama";
 import { Html } from "../web/html";
-
 export interface Vector3 {
   x: number;
   y: number;
   z: number;
 }
-
 export type PanoramaConfig = SceneConfig[];
-
 export interface SceneConfig {
   id: string;
   url: string;
@@ -23,7 +18,6 @@ export interface SceneConfig {
   infospots?: InfospotConfig[];
   [key: string]: any;
 }
-
 export interface InfospotConfig {
   id: string;
   point: Vector3;
@@ -32,7 +26,6 @@ export interface InfospotConfig {
   className?: string;
   [key: string]: any;
 }
-
 /**
  * Generate panoramas with config.
  */
@@ -44,13 +37,11 @@ class PanoramaGenerator extends Component {
   isSceneJumpEnabled: boolean;
   constructor(base: Base, config: PanoramaConfig | null = null) {
     super(base);
-
     this.config = null;
     this.assetManager = null;
     this.viewer = null;
     this.panoramas = [];
     this.isSceneJumpEnabled = true;
-
     if (config) {
       this.setConfig(config);
     }
@@ -71,25 +62,20 @@ class PanoramaGenerator extends Component {
     if (!config) {
       return;
     }
-
     const resourceList = config.map((item) => ({
       name: item.name,
       type: "texture" as ResoureType,
       path: item.url,
     }));
-
     const assetManager = new AssetManager(this.base, resourceList);
     this.assetManager = assetManager;
-
     this.assetManager.on("ready", () => {
       const viewer = new Viewer(this.base);
       this.viewer = viewer;
-
       // 全景图
       this.generatePanoramas();
       // 默认显示第一个全景图
       viewer.setPanorama(this.panoramas[0], 0);
-
       this.emit("generate", this);
     });
   }
@@ -133,8 +119,8 @@ class PanoramaGenerator extends Component {
             new THREE.Vector3(
               infospot.point.x,
               infospot.point.y,
-              infospot.point.z
-            )
+              infospot.point.z,
+            ),
           );
           html.addExisting();
           return html;
@@ -160,7 +146,7 @@ class PanoramaGenerator extends Component {
           if (infospot.jump) {
             const { panoramas, viewer } = this;
             const targetPanorama = panoramas.find(
-              (pa) => pa.id === infospot.jump
+              (pa) => pa.id === infospot.jump,
             );
             if (targetPanorama) {
               const el = this.getInfospotElByConfig(infospot);
@@ -229,5 +215,4 @@ class PanoramaGenerator extends Component {
     this.isSceneJumpEnabled = false;
   }
 }
-
 export { PanoramaGenerator };

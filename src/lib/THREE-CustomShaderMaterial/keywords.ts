@@ -3,7 +3,6 @@ export default {
   positionRaw: "csm_PositionRaw",
   pointSize: "csm_PointSize",
   fragColor: "csm_FragColor",
-
   // PBR
   diffuseColor: "csm_DiffuseColor",
   normal: "csm_Normal",
